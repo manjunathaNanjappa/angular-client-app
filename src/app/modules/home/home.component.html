@@ -1,0 +1,193 @@
+<nz-page-header>
+  <nz-page-header-title>Home</nz-page-header-title>
+  <nz-page-header-extra>
+    <button nz-button nzType="primary" (click)="openApplicationDrawer()">
+      Create new
+    </button>
+    <button
+      nz-button
+      nzType="primary"
+      style="margin-left: 6px"
+      (click)="logOut()"
+    >
+      log out
+    </button>
+  </nz-page-header-extra>
+  <nz-page-header-content> </nz-page-header-content>
+</nz-page-header>
+
+<div class="application-table">
+  <nz-table #basicTable [nzData]="listOfApplications" nzShowPagination="false">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Mobile number</th>
+        <th>Email</th>
+        <th>Gender</th>
+        <th>Application Amount</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{ data.name }}</td>
+        <td>{{ data.mobileNumber }}</td>
+        <td>{{ data.email }}</td>
+        <td>{{ data.gender }}</td>
+        <td>{{ data.amount }}</td>
+        <td>
+          <a (click)="openApplicationDetailsModal(data)">View </a>
+          <!-- <nz-divider nzType="vertical"></nz-divider>
+          <a (click)="editApplicationDetails(data)">Edit </a> -->
+          <nz-divider nzType="vertical"></nz-divider>
+          <a (click)="deleteApplication(data._id)">Delete</a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+<nz-drawer
+  [nzClosable]="false"
+  [nzVisible]="isDrawerVisible"
+  nzPlacement="right"
+  [nzTitle]="isEditApplication ? 'Edit application' : 'New application'"
+  (nzOnClose)="closeDrawer()"
+  nzWidth="460px"
+>
+  <ng-container *nzDrawerContent [ngTemplateOutlet]="applicationFormTemp">
+  </ng-container>
+</nz-drawer>
+
+<ng-template #applicationFormTemp>
+  <form
+    *ngIf="isDrawerVisible"
+    [formGroup]="applicationForm"
+    class="login-form"
+  >
+    <nz-form-item>
+      <nz-form-label nzSpan="24">Name</nz-form-label>
+      <nz-form-control nzSpan="24" nzErrorTip="Please input your name!">
+        <nz-input-group nzPrefixIcon="user">
+          <input
+            type="text"
+            nz-input
+            formControlName="name"
+            placeholder="Name"
+          />
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzSpan="24">Mobile Number</nz-form-label>
+      <nz-form-control nzSpan="24" nzErrorTip="Please input your mobile Number">
+        <nz-input-group nzPrefixIcon="mobile">
+          <input
+            type="number"
+            maxlength="10"
+            nz-input
+            formControlName="mobileNumber"
+            placeholder="Mobile Number"
+          />
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzSpan="24">E-mail</nz-form-label>
+      <nz-form-control nzSpan="24" nzErrorTip="Please input your mail id">
+        <nz-input-group nzPrefixIcon="mail">
+          <input
+            type="email"
+            nz-input
+            formControlName="email"
+            placeholder="E-mail"
+          />
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzSpan="24">Gender</nz-form-label>
+      <nz-form-control nzSpan="24" nzErrorTip="Please select gender">
+        <nz-select nzPlaceHolder="Gender" formControlName="gender">
+          <nz-option nzValue="male" nzLabel="Male"></nz-option>
+          <nz-option nzValue="female" nzLabel="Female"></nz-option>
+          <nz-option nzValue="other" nzLabel="Other"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzSpan="24">Application amount</nz-form-label>
+      <nz-form-control nzSpan="24" nzErrorTip="Please input amount">
+        <nz-input-group>
+          <input
+            type="number"
+            maxlength="10"
+            nz-input
+            formControlName="amount"
+            placeholder="Amount"
+          />
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzSpan="24">Profile pic</nz-form-label>
+      <nz-form-control nzSpan="24" nzErrorTip="Please select profile pic">
+        <!-- <nz-upload
+          [nzFileType]="profilePicFileType"
+          [(nzFileList)]="profilePicFileList"
+        >
+          <button nz-button>
+            <span nz-icon nzType="upload"></span>
+            Upload
+          </button>
+        </nz-upload> -->
+        <input type="file" (change)="onProfilePicChange($event)" />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label nzSpan="24">Marks Sheet</nz-form-label>
+      <nz-form-control nzSpan="24" nzErrorTip="Please select profile pic">
+        <!-- <nz-upload
+          [nzFileType]="marksSheetFileType"
+          [(nzFileList)]="marksSheetFileList"
+          >
+          <button nz-button>
+            <span nz-icon nzType="upload"></span>
+            Upload
+          </button>
+        </nz-upload> -->
+        <input type="file" (change)="onMarksSheetChange($event)" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <button nz-button (click)="closeDrawer()">Close</button>
+    <button
+      nz-button
+      style="margin-left: 8px"
+      [nzType]="'primary'"
+      (click)="submitForm()"
+    >
+      Create
+    </button>
+  </form>
+</ng-template>
+
+<ng-template #applicationDetailsModalTempRef let-applicationData>
+  <p>Name : {{ applicationData.name }}</p>
+  <p>Mobile Number : {{ applicationData.mobileNumber }}</p>
+  <p>Email : {{ applicationData.email }}</p>
+  <p>Gender : {{ applicationData.gender }}</p>
+  <p>Application amount : {{ applicationData.amount }}</p>
+  <p>
+    Profile pic :
+    <a (click)="downloadFile(applicationData.profilePic)">{{
+      applicationData.profilePic.fileName
+    }}</a>
+  </p>
+  <p>
+    Marks sheet :
+    <a (click)="downloadFile(applicationData.marksSheet)">{{
+      applicationData.marksSheet.fileName
+    }}</a>
+  </p>
+</ng-template>
