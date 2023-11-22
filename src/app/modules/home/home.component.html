@@ -17,9 +17,23 @@
 </nz-page-header>
 
 <div class="application-table">
+  <div style="display: flex; justify-content: end; margin-bottom: 16px">
+    <button
+      nz-button
+      [disabled]="setOfCheckedId.size == 0"
+      (click)="onClickExport()"
+    >
+      Export
+    </button>
+  </div>
   <nz-table #basicTable [nzData]="listOfApplications" nzShowPagination="false">
     <thead>
       <tr>
+        <th
+          [(nzChecked)]="checked"
+          [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="onAllChecked($event)"
+        ></th>
         <th>Name</th>
         <th>Mobile number</th>
         <th>Email</th>
@@ -30,6 +44,10 @@
     </thead>
     <tbody>
       <tr *ngFor="let data of basicTable.data">
+        <td
+          [nzChecked]="setOfCheckedId.has(data._id)"
+          (nzCheckedChange)="onItemChecked(data._id, $event)"
+        ></td>
         <td>{{ data.name }}</td>
         <td>{{ data.mobileNumber }}</td>
         <td>{{ data.email }}</td>
@@ -141,7 +159,11 @@
             Upload
           </button>
         </nz-upload> -->
-        <input type="file" (change)="onProfilePicChange($event)" />
+        <input
+          type="file"
+          [accept]="profilePicFileType"
+          (change)="onProfilePicChange($event)"
+        />
       </nz-form-control>
     </nz-form-item>
     <nz-form-item>
@@ -156,7 +178,11 @@
             Upload
           </button>
         </nz-upload> -->
-        <input type="file" (change)="onMarksSheetChange($event)" />
+        <input
+          type="file"
+          [accept]="marksSheetFileType"
+          (change)="onMarksSheetChange($event)"
+        />
       </nz-form-control>
     </nz-form-item>
 
